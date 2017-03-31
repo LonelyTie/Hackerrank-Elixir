@@ -28,7 +28,7 @@ defmodule Print do
 		IO.puts ""
 	end
 	def list([head | tail]) do
-		IO.write "%{#{Map.fetch!(head, "x")} #{Map.fetch!(head, "y")}}"
+		IO.write "%{#{Map.fetch!(head, "x")} #{Map.fetch!(head, "y")}} "
 		list(tail)
 	end
 
@@ -100,18 +100,37 @@ defmodule Solution do
 	end
 
 	defp findHull(sk, p, q, hull) do
+		IO.write "current Hull "
+		Print.list(hull)
 		c = Point.farthest(sk, p, q, 0, Map.new())
-		# Print.list([c])
+		IO.write "SK : "
+		Print.list(sk)
+		IO.write "farthest :"
+		Print.list([c])
 		ip = Enum.find_index(hull, &(&1 == p))
 		iq = Enum.find_index(hull, &(&1 == q))
-
+		IO.puts "ip : #{ip}, iq: #{iq}"
 		hull = List.insert_at(hull, ip + (ip - iq) , c)
-
+		IO.puts "S1 :"
 		s1 = Enum.filter(sk, &Point.right?(p, c, &1))
+		Print.list(s1)
+		IO.puts "S2 :"
 		s2 = Enum.filter(sk, &Point.right?(c, q, &1))
-		hull = findHull(s1, p, c, hull)
-		hull = findHull(s2, c, q, hull)
+		Print.list(s2)
+		IO.write "findHull s1 with "
+		Print.list([p])
+		IO.write "And "
+		Print.list([c])
+		IO.write "With "
 		Print.list(hull)
+		hull = findHull(s1, p, c, hull)
+		IO.write "findHull s2 with "
+		Print.list([c])
+		IO.write "And "
+		Print.list([q])
+		IO.write "With "
+		Print.list(hull)
+		hull = findHull(s2, c, q, hull)
 		hull
 	end
 
@@ -120,10 +139,18 @@ defmodule Solution do
 		last = List.last(tail)
 		hull = [head, last]
 		new_set = List.delete(tail, last)
+		IO.puts "HULL"
+		Print.list(hull)
 		s1 = Enum.filter(new_set, &Point.right?(head,last, &1))
+		IO.puts "S1 in quickHull"
+		Print.list(s1)
 		s2 = new_set -- s1
+		IO.puts "S2 in quickHull"
+		Print.list(s2)
 		hull = findHull(s1, head, last, hull)
-		findHull(s2, last, head, hull)
+		hull = findHull(s2, last, head, hull)
+		Print.list(hull)
+		hull
 	end
 	defp readInput do
 		IO.read(:all)
